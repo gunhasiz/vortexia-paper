@@ -1,0 +1,6 @@
+name: vortexia-paper
+version: '${version}'
+
+main: org.dmg.vortexiaPaper.VortexiaPaper
+api-version: '1.21.11'
+load: POSTWORLD
