@@ -10,10 +10,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class VortexManager {
-    private static final int POINTS_PER_ARM = 4;
+    private static final int ARMS = 5;
+    private static final int POINTS_PER_ARM = 3;
     private static final double SPIRAL_TWIST = Math.PI * 1.5;
+    private static final double FLOW_SPEED = 0.006;
 
-    
     private final Map<UUID, VortexData> activeVortexes = new ConcurrentHashMap<>();
     private final JavaPlugin plugin;
 
@@ -59,10 +60,13 @@ public class VortexManager {
                         }
                     }
 
-                    data.theta += 0.2;
-                    data.orbitTheta += 0.05;
+                    data.theta += 0.02;
+                    data.orbitTheta += 0.01;
+                    data.flowPhase += FLOW_SPEED;
+
                     if (data.theta > Math.PI * 2) data.theta -= Math.PI * 2;
                     if (data.orbitTheta > Math.PI * 2) data.orbitTheta -= Math.PI * 2;
+                    if (data.flowPhase > 1.0) data.flowPhase -= 1.0;
 
                     var center = player.getLocation().add(0, 1.0, 0);
                     var maxRadius = 1.5;
@@ -71,25 +75,28 @@ public class VortexManager {
                     var cosOrbit = Math.cos(data.orbitTheta);
                     var sinOrbit = Math.sin(data.orbitTheta);
 
-                    for (var arm = 0; arm < 3; arm++) {
-                        var angleOffset = (Math.PI * 2 / 3) * arm;
+                    for (var arm = 0; arm < ARMS; arm++) {
+                        var angleOffset = (Math.PI * 2 / ARMS) * arm;
 
                         for (var p = 1; p <= POINTS_PER_ARM; p++) {
-                            var t = (double) p / POINTS_PER_ARM;
+                            var t = ((double) p / POINTS_PER_ARM + data.flowPhase) % 1.0;
 
                             var radius = currentRadius * t;
                             var angle = data.theta + angleOffset + (t * SPIRAL_TWIST);
 
                             var localX = radius * Math.cos(angle);
-                            var y = radius * Math.sin(angle);
+                            var localY = radius * Math.sin(angle);
 
                             var x = localX * cosOrbit;
                             var z = localX * sinOrbit;
+                            var y = localY;
 
                             var particleLoc = center.clone().add(x, y, z);
-                            var oppositeParticleLoc = center.clone().add(z, y, x);
+                            var oppositeParticleLoc = center.clone().add(y, x, z);
+                            var polarParticleLoc = center.clone().add(z, x, y);
                             player.getWorld().spawnParticle(Particle.SOUL, particleLoc, 1, 0, 0, 0, 0);
                             player.getWorld().spawnParticle(Particle.SOUL, oppositeParticleLoc, 1, 0, 0, 0, 0);
+                            player.getWorld().spawnParticle(Particle.SOUL, polarParticleLoc, 1, 0, 0, 0, 0);
                         }
                     }
                 }
