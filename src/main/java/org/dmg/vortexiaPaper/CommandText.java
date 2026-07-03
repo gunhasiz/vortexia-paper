@@ -3,9 +3,11 @@ package org.dmg.vortexiaPaper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
@@ -15,6 +17,16 @@ public class CommandText implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NonNull [] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("Only players can text other players.");
+            return true;
+        }
+        
+        if (player.getGameMode() != GameMode.SPECTATOR) {
+            player.sendMessage(Component.text("You must be in Spectator mode to use this!").color(NamedTextColor.RED));
+            return true;
+        }
+        
         if (args.length < 2) {
             sender.sendMessage(Component.text("Usage: /text <player_name> <message...>").color(NamedTextColor.RED));
             return true;
