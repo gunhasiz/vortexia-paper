@@ -1,6 +1,14 @@
-name: vortexia-paper
+name: vortexia
 version: '${version}'
 
 main: org.dmg.vortexiaPaper.VortexiaPaper
 api-version: '1.21.11'
+description: Vortexia Souls simulator
 load: POSTWORLD
+commands:
+  vortexia:
+    description: Toggle your visual vortex
+    usage: /vortexia toggle
+  text:
+    description: Send a targeted golden action bar message
+    usage: /text <player> <message...>
