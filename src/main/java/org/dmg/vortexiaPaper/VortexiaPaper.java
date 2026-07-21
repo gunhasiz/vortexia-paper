@@ -13,13 +13,13 @@ public final class VortexiaPaper extends JavaPlugin {
         if (getCommand("vortexia") != null)
             Objects.requireNonNull(getCommand("vortexia")).setExecutor(new CommandVortex(_vortexManager));
         if (getCommand("text") != null) 
-            Objects.requireNonNull(getCommand("text")).setExecutor(new CommandText());
+            Objects.requireNonNull(getCommand("text")).setExecutor(new CommandText(this));
 
         getLogger().info("Vortexia Paper MVP has been enabled!");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("Vortexia Paper MVP disabled gracefully.");
+        getLogger().info("Vortexia Paper MVP disabled.");
     }
 }
